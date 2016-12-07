@@ -1,17 +1,29 @@
-local
-   fun {Count E S Acc}
-      case S of nil then Acc
-      []H|T then
-	 if E==H then {Count E T Acc+1}
-	 else {Count E T Acc}
+declare
+fun{Counter InS}
+   fun{Update LisofR Result}
+      case LisofR of
+	 nil then [Result#1]
+      [] (K#V)|T then
+	 if K == Result then (K#(V+1))|T
+	 else (K#V)|{Update T Result}
 	 end
       end
    end
-   fun {Counter S}
-      case S
-      of H|T then [H#{Count H S 0}]|{Counter T}
+   fun{Parcourir AVerif List}
+      case AVerif of H|T then
+	 local N in
+	    N={Update List H}
+	    N|{Parcourir T N}
+	 end
+      []nil then nil
       end
    end
 in
-   thread {Browse {Counter a|b|a|c|_}} end
+   thread {Parcourir InS nil} end
+end
+
+local InS X in
+   X={Counter InS}
+   InS=a|b|a|c|_
+   {Browse X}
 end
